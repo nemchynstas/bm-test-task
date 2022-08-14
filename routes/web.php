@@ -26,3 +26,6 @@ Route::get('/book-view/{slug}',[App\Http\Controllers\BooksController::class,'boo
 
 Route::post('/add-comment',[App\Http\Controllers\BooksController::class,'addComment']);
 Route::post('/save-comment',[App\Http\Controllers\BooksController::class,'changeComment']);
+
+Route::post('/search-book',[App\Http\Controllers\BooksController::class,'searchBook']);
+Route::post('/search-comment',[App\Http\Controllers\BooksController::class,'searchComment']);

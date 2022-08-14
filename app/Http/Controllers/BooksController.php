@@ -60,4 +60,35 @@ class BooksController extends Controller
         return 1;
     }
 
+    public function searchBook(Request $request){
+
+        if($request->author && $request->title){
+            $books = Book::where('author', 'like', "%".$request->author."%")->where('title','like',"%".$request->title."%")->get();
+        }elseif($request->title){
+            $books = Book::where('title','like',"%".$request->title."%")->get();
+        }elseif($request->author) {
+            $books = Book::where('author', 'like', "%".$request->author."%")->get();
+        }
+
+        $booksFiltered = view('books-items',compact('books'))->render();
+
+        return response()->json(['books' => $booksFiltered]);
+
+    }
+
+    public function searchComment(Request $request){
+
+        if($request->rate && $request->comment){
+            $comments = Comment::where('rate', 'like', "%".$request->rate."%")->where('comment','like',"%".$request->comment."%")->get();
+        }elseif($request->comment){
+            $comments = Comment::where('comment','like',"%".$request->comment."%")->get();
+        }elseif($request->rate) {
+            $comments = Comment::where('rate', 'like', "%".$request->rate."%")->get();
+        }
+
+        $commentsFiltered = view('comments-list',compact('comments'))->render();
+
+        return response()->json(['comments' => $commentsFiltered]);
+    }
+
 }

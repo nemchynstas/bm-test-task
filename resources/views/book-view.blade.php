@@ -32,22 +32,25 @@
                 @endguest
             </div>
             <div class="comments-list">
-                @foreach($comments as $comment)
-                    <div class="comment-item-{{$comment->id}}" id="comment-item">
-                        <p>{{$comment->owner->name}}</p>
-                        <p id="comment-{{$comment->id}}">{{$comment->comment}}</p>
-                        <p>{{$comment->rate}}</p>
-                        @guest
-                        @else
-                            @if(auth()->user()->id == $comment->user_id)
-                                <button class="edit" id="edit-{{$comment->id}}" onclick="editComment('{{$comment->id}}')">Edit</button>
-                            @else
-                            @endif
-                        @endguest
-                        <p>Created: {{$comment->madeTimeAgo($comment->created_at)}}</p>
-                        <p>Updated: {{$comment->madeTimeAgo($comment->updated_at)}}</p>
-                    </div>
-                @endforeach
+                <form action="" id="search_comment" method="POST">
+                    <label for="search_text">Search by comment</label>
+                    <input type="text" id="search_text" name="comment">
+
+                    <label for="search_rate">Search by rate</label>
+                    <select name="rate" id="search_rate">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+
+                    <button>Search</button>
+                </form>
+
+                <div id="comments">
+                    @include('comments-list')
+                </div>
             </div>
         </div>
     </div>
@@ -113,6 +116,31 @@
                 processData: false
             })
         }
+
+        $('#search_comment').on('submit',function(ev){
+            ev.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url:'/search-comment',
+                type:'POST',
+                data:formData,
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (msg) {
+                    console.log(msg);
+                    //location.reload();
+                    $('#comments').html(msg.comments);
+                },
+                error: function(error) {
+                    console.log(error);
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
     </script>
 
 @endsection
